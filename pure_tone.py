@@ -32,28 +32,6 @@ noise_out.setparams((NCHANNELS,
 
 def generate_tone(frequency, amplitude):
 
-    """
-    Tone perception:
-    
-    Human perception relies on ratios of difference rather than absolute values
-    e.g. 200 -> 400 Hz and 500 -> 1000 Hz (1:2)
-    Intensity is measured as watts per meter squared
-    e.g. 0.1 -> 0.01 and 0.001 -> 0.0001
-    
-    We experience sound in a logarithmic fashion
-    Human perception of volume is related to changes in amplitude
-    
-    See: Logarithmic tables? -> Ed
-    
-    10 * lg(I1 / I2) I1, I2 - intensities
-    
-    Normal speech: 60dB
-    Shout: 80dB
-    
-    Weber-Fechner Law: 
-    
-    """
-
     values = []
 
     for i in range(0, NFRAMES):
@@ -71,11 +49,9 @@ def generate_tone_square(frequency, amplitude):
     values = []
 
     for i in range(0, NFRAMES):
-        # value = sin_wave(i, frequency, amplitude)     # maybe replace with parameters?
+        # value = sin_wave(i, frequency, amplitude)
         value = convert_to_simple_square_wave(i, frequency, amplitude)
         values.append(value)
-
-        print(str(value))
 
         # print(str(value))
 
@@ -114,8 +90,6 @@ def combine_tones(*tones):
 
 
 def superposition(tone_1, tone_2):
-    """Reminder: slap Cyrus"""
-
     values = []
 
     for i in range(0, max(len(tone_1), len(tone_2))):
@@ -140,12 +114,10 @@ def convert_to_simple_square_wave(position, frequency, amplitude):
                           FRAMERATE) * \
                           MAX_VALUE * amplitude
 
-    if base_value < (-MAX_VALUE / 2):
+    if base_value < 0:
         return -MAX_VALUE
-    elif base_value > (MAX_VALUE / 2):
+    elif base_value > 0:
         return MAX_VALUE
-    else:
-        return 0
 
 
 def sin_wave(position, frequency, amplitude):
@@ -173,7 +145,7 @@ def package(tone_list):
 pygame.init()
 pygame.display.init()
 
-screen = pygame.display.set_mode((100, 100))
+screen = pygame.display.set_mode((500, 500))
 
 while True:
     for event in pygame.event.get():
@@ -192,7 +164,7 @@ while True:
             pygame.mixer.music.play(5, 0.0)
         elif event.type == pygame.KEYDOWN and event.key == pygame.K_s:
             noise_out.writeframes(
-                package(generate_tone_square(1760, 0.5))
+                package(generate_tone_square(300, 0.5))
             )
             noise_out.close()
         elif event.type == pygame.KEYDOWN and event.key == pygame.K_f:
@@ -201,4 +173,4 @@ while True:
                                                     generate_tone(104, 0.5)
                                                     ),
                         generate_tone(102, 0.5)
-                                                )))
+                                      )))
