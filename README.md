@@ -1,5 +1,12 @@
 # comp-120-tinkering-audio
 
+
+-------------------------------------------------------------------------------
+CONTRACT 1 - NOT MUCH RIGHT NOW, IN THE FUTURE, WALKING/ATTACKING SOUND EFFECTS
+TAKEN OWNERSHIP BY CYRUS
+WITH HELP FROM FELLOW TEAM MEMBERS: ADRIAN< PAUL AND JAKOB
+-------------------------------------------------------------------------------
+
 Only sound_effects.py and main.py are mine, the rest are from pair programming.
 
 A key generates basic tone to be played back with D
