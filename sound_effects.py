@@ -1,7 +1,6 @@
 import wave
 import math
 import struct
-import pygame
 
 
 class SFX:
@@ -13,16 +12,16 @@ class SFX:
     sample_width = 2
     sample_rate = 44100
 
-    def __init__(self):
+    def __init__(self, mode):
 
         self.length = 6  # in seconds
-        self.file_name = 'output.wav'
+        self.file_name = 'Whoosh.wav'  # source: http://soundbible.com
         self.samples = SFX.sample_rate * self.length
         self.frequency = 350
         self.volume = 1
-        self.sound_file = wave.open(self.file_name, 'w')
-
-        self.sound_file.setparams((SFX.channels, self.sample_width, self.sample_rate, self.samples, SFX.compressionType, self.compressionName))
+        self.sound_file = wave.open(self.file_name, mode)
+        if mode == 'w':
+            self.sound_file.setparams((SFX.channels, self.sample_width, self.sample_rate, self.samples, SFX.compressionType, self.compressionName))
 
     @staticmethod
     def generate_sin_wave(position, frequency, amplitude):
@@ -32,25 +31,6 @@ class SFX:
                 * frequency
                 * float((position / SFX.sample_rate)))\
                 * SFX.maxValue * amplitude
-
-    def generate_sound(self):
-
-        values = []
-        for i in range(0, self.samples):
-            value = SFX.generate_sin_wave(i, self.frequency, 0.5)
-
-            '''
-            if value >= SFX.maxValue:
-                values.append(SFX.maxValue)
-            elif value <= -SFX.maxValue:
-                values.append(-SFX.maxValue)
-            else:'''
-            values.append(value)
-
-        return values
-
-    def play_sound(self):
-        pass
 
     @staticmethod
     def package(tone_list):
@@ -64,14 +44,34 @@ class SFX:
 
         return b''.join(values)
 
+    def generate_sound(self):
+
+        values = []
+        for i in range(0, self.samples):
+            value = SFX.generate_sin_wave(i, self.frequency, 0.5)
+
+            values.append(value)
+
+        return values
+
+    def play_sound(self):
+        pass
+
 
 class MoveSFX(SFX):
-
+    """
     def generate_sound(self):
         pass
 
     def play_sound(self):
         pass
+    """
+
+    def generate_echo(self, delay=1000):
+        length = self.sound_file.getnframes()
+        self.sound_file.close()
+        for i in range(0, length):
+            print(i)
 
 
 class AttackSFX(SFX):
