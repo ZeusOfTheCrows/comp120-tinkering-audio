@@ -146,34 +146,51 @@ class MoveSFX:
         :param filename: name of input file
         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
         """
-        read_wav(filename)
+
+        self.file_name = filename + '.wav'
+        self.tone_list = read_wav(self.file_name)
 
         self.length = 6  # in seconds
-        self.file_name = filename + '.wav'
         self.samples = SFX.sample_rate * self.length
         self.frequency = 300
         self.volume = 1
-        self.sound_file = wave.open(self.file_name, r)
 
     def generate_echo(self, delay=1000):
         """
         _______________________________________________________________________
+        Generates echo.
         :param delay:
         :return:
         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
         """
 
-        length = self.sound_file.getnframes()
-        self.sound_file.close()
-        for i in range(0, length):
-            print(i)
+        '''
+        for tones in self.tone_list:
+            print(tones)
+        '''
+        values = []
+
+        for i in range(0, self.samples):
+            if i <= delay:
+
+                value = self.tone_list[i] + (self.tone_list[i-1000] * 0.6)
+
+                if value >= SFX.maxValue:
+                    values.append(SFX.maxValue)
+                elif value <= -SFX.maxValue:
+                    values.append(-SFX.maxValue)
+                else:
+                    values.append(value)
+
+        return values
 
 
 class AttackSFX(SFX):
 
     """
     ___________________________________________________________________________
-    Sound effects for player/enemy attack - not yet implemented.
+    Sound effects for player/enemy attack - not yet implemented, stays in here
+    for forward compatibility.
     ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
     """
 

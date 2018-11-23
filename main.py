@@ -38,7 +38,7 @@ while True:
                 # generate echo (not working)
             elif event.key == pygame.K_e:
                 whoosh.generate_echo()
-                whoosh.sound_file.close()
+                # Todo: remove comment whoosh.sound_file.close()
 
                 # allows entering manual frequency (using terminal)
             elif event.key == pygame.K_f:
