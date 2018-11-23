@@ -5,6 +5,35 @@ import struct
 
 class SFX:
 
+    @staticmethod
+    def read_wav(filename):
+
+        """Function from Michael's slack message"""
+
+        noise_in = wave.open(filename, 'rb')
+
+        channels = noise_in.getnchannels()
+        sample_rate = noise_in.getframerate()
+        sample_width = noise_in.getsampwidth()
+        frame_count = noise_in.getnframes()
+
+        raw_audio = noise_in.readframes(frame_count)
+        noise_in.close()
+
+        total_samples = frame_count * channels
+
+        if sample_width == 1:
+            fmt = "%ib" % total_samples
+        elif sample_width == 2:
+            fmt = "%ih" % total_samples
+        else:
+            raise ValueError("Not 8 or 16 bit")
+
+        audio_data = struct.unpack(fmt, raw_audio)
+        del raw_audio
+
+        return list(audio_data)
+
     # Will be loaded from helper.py
     compressionType = "NONE"
     compressionName = "No compression"
@@ -63,7 +92,8 @@ class SFX:
 
 class MoveSFX(SFX):
     """
-    Sound effects for player move
+    Sound effects for player move. Extends SFX class purely for gen_sin_wave()
+    and package()
     """
 
     def generate_echo(self, delay=1000):
@@ -75,9 +105,8 @@ class MoveSFX(SFX):
 
 class AttackSFX(SFX):
     """
-    Sound effects for player/enemy attack
+    Sound effects for player/enemy attack - not yet implemented
     """
-
 
     def generate_sound(self):
         pass
