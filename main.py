@@ -39,9 +39,16 @@ while True:
                     print('Please generate tone with "A" first')
 
                 # generate echo (not working)
-            elif event.key == pygame.K_e:
+            elif event.key == pygame.K_g:
                 whoosh.generate_echo()
-                pygame.mixer.music.load('whoosh.wav')
+
+                # play generated echo
+            elif event.key == pygame.K_e:
+                try:
+                    pygame.mixer.music.load(whoosh.sound_file_name)
+                    pygame.mixer.music.play(1, 0.0)
+                except pygame.error:
+                    print('Please generate echo with "G" first')
 
                 # allows entering manual frequency (using terminal)
             elif event.key == pygame.K_f:

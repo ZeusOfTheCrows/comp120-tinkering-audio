@@ -101,7 +101,7 @@ class SFX:
         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
         """
 
-        self.length = 5  # in seconds
+        self.length = 1  # in seconds
         self.file_name = filename + '.wav'
         self.n_of_samples = SFX.sample_rate * self.length
         self.frequency = float(frequency)
@@ -159,29 +159,31 @@ class MoveSFX:
                                    SFX.compressionName))
         self.volume = 1
 
-    def generate_echo(self, delay=1000):
+    def generate_echo(self, delay=500):
         """
         _______________________________________________________________________
         Will generate echo (after a little work).
         :param delay: echo delay
-        :return: echo file name
         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
         """
 
-        values = []
+        new_tone_list = []
+        # generates echo
         for i in range(0, len(self.tone_list)):
-            if i <= delay:
+            if i < delay:
+                new_tone_list.append(self.tone_list[i])
+            else:
+                new_tone_list.append(self.tone_list[i] + self.tone_list[i - 1000])
 
-                value = self.tone_list[i] + (self.tone_list[i-1000] * 0.6)
-
-                if value >= SFX.maxValue:
-                    values.append(SFX.maxValue)
-                elif value <= -SFX.maxValue:
-                    values.append(-SFX.maxValue)
-                else:
-                    values.append(value)
-                print(value)
+        values = []
+        # checks value doesn't get read incorrectly:
+        for i in range(0, len(new_tone_list)):
+            if new_tone_list[i] >= SFX.maxValue:
+                values.append(SFX.maxValue)
+            elif new_tone_list[i] <= -SFX.maxValue:
+                values.append(-SFX.maxValue)
+            else:
+                values.append(new_tone_list[i])
 
         self.sound_file.writeframes(package(values))
         self.sound_file.close()
-        return self.sound_file_name
