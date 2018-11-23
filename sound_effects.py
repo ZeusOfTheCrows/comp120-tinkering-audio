@@ -101,19 +101,19 @@ class SFX:
         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
         """
 
-        self.length = 6  # in seconds
+        self.length = 5  # in seconds
         self.file_name = filename + '.wav'
-        self.samples = SFX.sample_rate * self.length
+        self.n_of_samples = SFX.sample_rate * self.length
         self.frequency = float(frequency)
         self.volume = 1
         self.sound_file = wave.open(self.file_name, mode)
         if mode == 'w':
             self.sound_file.setparams((SFX.channels,
-                                       self.sample_width,
-                                       self.sample_rate,
-                                       self.samples,
+                                       SFX.sample_width,
+                                       SFX.sample_rate,
+                                       self.n_of_samples,
                                        SFX.compressionType,
-                                       self.compressionName))
+                                       SFX.compressionName))
 
     def generate_sound(self):
         """
@@ -124,7 +124,7 @@ class SFX:
         """
 
         values = []
-        for i in range(0, self.samples):
+        for i in range(0, self.n_of_samples):
             value = generate_sin_wave(i, self.frequency, 0.5)
             values.append(value)
 
@@ -149,28 +149,27 @@ class MoveSFX:
 
         self.file_name = filename + '.wav'
         self.tone_list = read_wav(self.file_name)
-
-        self.length = 6  # in seconds
-        self.samples = SFX.sample_rate * self.length
-        self.frequency = 300
+        self.sound_file_name = 'echo.wav'
+        self.sound_file = wave.open(self.sound_file_name, 'w')
+        self.sound_file.setparams((SFX.channels,
+                                   SFX.sample_width,
+                                   SFX.sample_rate,
+                                   len(self.tone_list),
+                                   SFX.compressionType,
+                                   SFX.compressionName))
         self.volume = 1
 
     def generate_echo(self, delay=1000):
         """
         _______________________________________________________________________
-        Generates echo.
-        :param delay:
-        :return:
+        Will generate echo (after a little work).
+        :param delay: echo delay
+        :return: echo file name
         ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
         """
 
-        '''
-        for tones in self.tone_list:
-            print(tones)
-        '''
         values = []
-
-        for i in range(0, self.samples):
+        for i in range(0, len(self.tone_list)):
             if i <= delay:
 
                 value = self.tone_list[i] + (self.tone_list[i-1000] * 0.6)
@@ -181,22 +180,8 @@ class MoveSFX:
                     values.append(-SFX.maxValue)
                 else:
                     values.append(value)
+                print(value)
 
-        return values
-
-
-class AttackSFX(SFX):
-
-    """
-    ___________________________________________________________________________
-    Sound effects for player/enemy attack - not yet implemented, stays in here
-    for forward compatibility.
-    ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
-    """
-
-    def generate_sound(self):
-        pass
-
-    def play_sound(self):
-        pass
-
+        self.sound_file.writeframes(package(values))
+        self.sound_file.close()
+        return self.sound_file_name
